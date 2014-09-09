@@ -6,7 +6,6 @@ export LD_LIBRARY_PATH=/usr/local/cuda-5.5/lib:/usr/local/cuda-5.5/lib64:/usr/li
 
 export TERM='xterm-256color'
 
-
 if [ -f ~/.bash_aliases ]; then
     . ~/.bash_aliases
 fi

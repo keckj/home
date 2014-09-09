@@ -1,11 +1,11 @@
+
 alias sudo='sudo env PATH=$PATH env LD_LIBRARY_PATH=$LD_LIBRARY_PATH'
 alias make='colormake -j8'
-alias gittree='git log --graph --decorate --pretty=oneline --abbrev-commit'
 
+alias gittree='git log --graph --decorate --pretty=oneline --abbrev-commit'
 alias lines='wc -l `find ./ -type f | egrep "\.(hpp|h|cpp|c|cl|cu|glsl)$" | sort | uniq | xargs`'
 
-alias la='ls -a'
-alias ll='ls -l'
+alias ll='ls -la'
 alias open='sudo open'
 
 alias agu='sudo apt-get update'

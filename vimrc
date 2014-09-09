@@ -4,32 +4,32 @@
 
 "Important
 set nocompatible "No compatibility with VI, must be first
-let mapleader = ','  "REMAPE LE <leader> EN ',' A LA PLACE DE '\' 
+let mapleader = ',' "remap <leader> into ',' (instead of '\') 
 
 "Enable plugins
+syntax on
 filetype plugin on
 filetype indent on
 
 "Divers
+set history=1000 "on garde les 1000 dernière commandes :history pour voir
 set backspace=indent,eol,start "Allow backspace in insert mode
 set ruler "shows current position
-set guifont=Courier\12 "Modifier la police
-set encoding=utf8 "Modifier l'encodage
 set autoread "when file is changed from the outside
-set showcmd "show when leader pressed
-set history=1000 "on garde les 1000 dernière commandes :history pour voir
+set encoding=utf-8 "Modifier l'encodage
 set showcmd "show information about current command in bottom line
 set nu "Affiche les numéro de ligne
 set noshowmatch "N'affiche pas les parenthèses correspondantes
+set listchars=eol:$,tab:>-,trail:~,extends:>,precedes:<
 "set list "Affiche les caractères louches
 "set cursorline "Affiche en surbrillance la ligne qui contient le curseur
 "set mouse=a "Active la souris en mode shell
 
 "Gestion des indent
 set autoindent
-set shiftwidth=4
 set smartindent
 set smarttab
+set shiftwidth=4
 set softtabstop=4
 set tabstop=4
 set expandtab "Supprime les tabulation et met des espaces à la place
@@ -42,9 +42,10 @@ set wildignore=*.o,*.r,*.so,*.tar,*.tgz "on ignore des types de fichiers pour la
 "Recherche
 set ignorecase "recherche insensible à la casse
 set smartcase "sauf si il y a une majuscule dedans
-set hlsearch "highlight shearched phrase
 set incsearch "highlight search as you type
 set magic "pour les regex
+
+set hlsearch "highlight shearched phrase
 
 "Word wrapping
 set wrap
@@ -61,7 +62,6 @@ set noswapfile
 "Correction orthographique
 set spelllang=en,fr
 set spellsuggest=5
-"set spell "active la surbrillance des fautes dans les commentaires
 
 "Autofolding des blocs
 "set foldmethod=syntax
@@ -93,45 +93,55 @@ map <leader>ss : setlocal spell!<cr>
 map <silent> <leader><cr> :noh<cr>
 
 "Key binding to open taglist, MRU or NERDTree
-map <F2> :execute 'TlistToggle'<cr>
-map <F3> :MRU<cr> 
+map <F1> :execute 'TagbarToggle'<cr>
+map <F2> :execute 'GundoToggle'<cr> 
+map <F3> :execute 'MRU'<cr> 
 map <F4> :execute 'NERDTreeToggle' . getcwd()<cr>
-
-"Default key binding to compile (a makefile must be in CWD)
-map <F5> :!clear && make<cr>
-
 
 """""""""""
 ""PLUGINS""
 """""""""""
 
 "Chargement des plugins
-
 execute pathogen#infect()
 
-if !exists('g:airline_symbols')
-  let g:airline_symbols={}
-endif
+"Airline
 let g:airline_powerline_fonts=1
-let g:airline_symbols.space = "\ua0"
-let g:bufferline_echo = 0
+let g:airline#extensions#tabline#enabled = 1
 let laststatus=2
-set noshowmode
-
-"Transform <Leader> key of easymotion from <leader><leader> to <leader> (plugin compatibility)
-"let g:EasyMotion_leader_key = '<leader>'
+"set noshowmode
 
 "Disable matchparen plugin at vim opening (turn of parenthesis matching)
 let g:loaded_matchparen = 1
 
 "Disable showmarks plugin at vim opening
-"let g:showmarks_enable = 1
+let g:showmarks_enable = 1
 "Affiche juste les marques suivantes :
 let g:showmarks_include="abcdefhijklmnopqrstuvwxyzxABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
+"Easymotion (dual character search)
+nmap <Plug>(easymotion-prefix)S <Plug>(easymotion-s2)
+nmap <Plug>(easymotion-prefix)T <Plug>(easymotion-t2)
+
+"Tabularize
+nmap <Leader>t :Tabularize /
+
+"Rainbow parenthesis
+au VimEnter * RainbowParenthesesToggle
+au Syntax * RainbowParenthesesLoadRound
+au Syntax * RainbowParenthesesLoadSquare
+au Syntax * RainbowParenthesesLoadBraces
+
+"Startify
+let g:startify_custom_header = map(split(system(
+            \ 'fortune -as | cowsay -x -f $(ls /usr/share/cowsay/cows | sort -R | tail -1)'
+            \), '\n'), '"   ". v:val') + ['','']
 
 "Coloration syntaxique
-syntax on
 let g:hybrid_use_Xresources = 1
-colorscheme hybrid "try desert or comment the line if you don't like your actual colors 
 set background=dark
+colorscheme hybrid
+
+"Highlight changes
+highlight Search ctermfg=LightMagenta cterm=underline,bold  ctermbg=NONE
+highlight IncSearch ctermfg=LightMagenta cterm=underline,bold  ctermbg=NONE
