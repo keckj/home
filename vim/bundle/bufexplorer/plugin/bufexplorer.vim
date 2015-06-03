@@ -1,5 +1,5 @@
 "=============================================================================
-"    Copyright: Copyright (c) 2001-2014, Jeff Lanzarotta
+"    Copyright: Copyright (c) 2001-2015, Jeff Lanzarotta
 "               All rights reserved.
 "
 "               Redistribution and use in source and binary forms, with or
@@ -36,7 +36,7 @@
 " Name Of File: bufexplorer.vim
 "  Description: Buffer Explorer Vim Plugin
 "   Maintainer: Jeff Lanzarotta (delux256-vim at yahoo dot com)
-" Last Changed: Tuesday, 19 August 2014
+" Last Changed: Tuesday, 27 January 2015
 "      Version: See g:bufexplorer_version for version number.
 "        Usage: This file should reside in the plugin directory and be
 "               automatically sourced.
@@ -44,19 +44,22 @@
 "               You may use the default keymappings of
 "
 "                 <Leader>be  - Opens BufExplorer
+"                 <Leader>bt  - Toggles BufExplorer open or closed
 "                 <Leader>bs  - Opens horizontally split window BufExplorer
 "                 <Leader>bv  - Opens vertically split window BufExplorer
 "
 "               Or you can override the defaults and define your own mapping
 "               in your vimrc file, for example:
 "
-"                   noremap <silent> <F11> :BufExplorer<CR>
-"                   noremap <silent> <m-F11> :BufExplorerHorizontalSplit<CR>
-"                   noremap <silent> <c-F11> :BufExplorerVerticalSplit<CR>
+"                   nnoremap <silent> <F11> :BufExplorer<CR>
+"                   nnoremap <silent> <s-F11> :ToggleBufExplorer<CR>
+"                   nnoremap <silent> <m-F11> :BufExplorerHorizontalSplit<CR>
+"                   nnoremap <silent> <c-F11> :BufExplorerVerticalSplit<CR>
 "
 "               Or you can use
 "
 "                 ":BufExplorer"                - Opens BufExplorer
+"                 ":ToggleBufExplorer"          - Opens/Closes BufExplorer
 "                 ":BufExplorerHorizontalSplit" - Opens horizontally window BufExplorer
 "                 ":BufExplorerVerticalSplit"   - Opens vertically split window BufExplorer
 "
@@ -72,7 +75,7 @@ endif
 "2}}}
 
 " Version number
-let g:bufexplorer_version = "7.4.4"
+let g:bufexplorer_version = "7.4.8"
 
 " Check for Vim version {{{2
 if v:version < 700
@@ -84,6 +87,7 @@ endif
 
 " Create commands {{{2
 command! BufExplorer :call BufExplorer()
+command! ToggleBufExplorer :call ToggleBufExplorer()
 command! BufExplorerHorizontalSplit :call BufExplorerHorizontalSplit()
 command! BufExplorerVerticalSplit :call BufExplorerVerticalSplit()
 
@@ -129,7 +133,6 @@ function! s:Setup()
         autocmd BufWinEnter \[BufExplorer\] call s:Initialize()
         autocmd BufWinLeave \[BufExplorer\] call s:Cleanup()
         autocmd TabEnter * call s:TabEnter()
-        autocmd SessionLoadPost * call s:Reset()
     augroup END
 endfunction
 
@@ -337,6 +340,15 @@ endfunction
 function! BufExplorerVerticalSplit()
     let s:splitMode = "vsp"
     execute "BufExplorer"
+endfunction
+
+" ToggleBufExplorer {{{2
+function! ToggleBufExplorer()
+    if exists("s:running") && s:running == 1 && bufname(winbufnr(0)) == s:name
+        call s:Close()
+    else
+        call BufExplorer()
+    endif
 endfunction
 
 " BufExplorer {{{2
@@ -562,7 +574,7 @@ function! s:CreateHelp()
         call add(header, '" d : delete buffer')
         call add(header, '" D : wipe buffer')
         call add(header, '" f : toggle find active buffer')
-        call add(header, '" p : toggle spliting of file and path name')
+        call add(header, '" p : toggle splitting of file and path name')
         call add(header, '" q : quit')
         call add(header, '" r : reverse sort')
         call add(header, '" R : toggle showing relative or full paths')
@@ -914,7 +926,7 @@ function! s:Close()
         " buffers.
         execute "enew"
     else
-        " Since there are buffers left to switch to, swith to the previous and
+        " Since there are buffers left to switch to, switch to the previous and
         " then the current.
         for b in reverse(listed[0:1])
             execute "keepjumps silent b ".b
@@ -1202,15 +1214,19 @@ call s:Set("g:bufExplorerSplitHorzSize", 0)             " Height for a horizonta
 
 " Default key mapping {{{1
 if !hasmapto('BufExplorer') && g:bufExplorerDisableDefaultKeyMapping == 0
-    noremap <script> <silent> <unique> <Leader>be :BufExplorer<CR>
+    nnoremap <script> <silent> <unique> <Leader>be :BufExplorer<CR>
+endif
+
+if !hasmapto('ToggleBufExplorer') && g:bufExplorerDisableDefaultKeyMapping == 0
+    nnoremap <script> <silent> <unique> <Leader>bt :ToggleBufExplorer<CR>
 endif
 
 if !hasmapto('BufExplorerHorizontalSplit') && g:bufExplorerDisableDefaultKeyMapping == 0
-    noremap <script> <silent> <unique> <Leader>bs :BufExplorerHorizontalSplit<CR>
+    nnoremap <script> <silent> <unique> <Leader>bs :BufExplorerHorizontalSplit<CR>
 endif
 
 if !hasmapto('BufExplorerVerticalSplit') && g:bufExplorerDisableDefaultKeyMapping == 0
-    noremap <script> <silent> <unique> <Leader>bv :BufExplorerVerticalSplit<CR>
+    nnoremap <script> <silent> <unique> <Leader>bv :BufExplorerVerticalSplit<CR>
 endif
 
 " vim:ft=vim foldmethod=marker sw=4
